@@ -1,0 +1,76 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: 152 45% 3%;
+  --foreground: 144 33% 96%;
+  --border: 150 30% 17%;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  min-height: 100vh;
+  color: hsl(var(--foreground));
+  background: #020606;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(50, 242, 83, 0.28);
+  border-radius: 999px;
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.glass {
+  border: 1px solid rgba(114, 255, 145, 0.13);
+  background: linear-gradient(145deg, rgba(9, 18, 29, 0.86), rgba(4, 10, 16, 0.68));
+  backdrop-filter: blur(18px);
+}
+
+.text-balance {
+  text-wrap: balance;
+}
+
+.premium-card {
+  border: 1px solid rgba(114, 255, 145, 0.12);
+  background: linear-gradient(145deg, rgba(9, 18, 29, 0.92), rgba(4, 10, 16, 0.75));
+  backdrop-filter: blur(16px);
+}
+
+.story-ring {
+  box-shadow: 0 0 24px rgba(50, 242, 83, 0.2);
+}
+
+.field-input {
+  height: 2.75rem;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
+  padding: 0 0.75rem;
+  color: white;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.field-input:focus {
+  border-color: rgba(50, 242, 83, 0.5);
+}
