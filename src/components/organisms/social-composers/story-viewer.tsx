@@ -10,16 +10,37 @@ import type { ReactionKey, Story } from "@/types/betsocial";
 
 type StoryViewerProps = {
   story?: Story;
+  stories?: Story[];
   onClose: () => void;
+  onStoryChange?: (story: Story) => void;
   onReact: (storyId: string, reaction: ReactionKey) => void;
   currentUserId?: string;
   onDelete?: (storyId: string) => void;
   onEdit?: (story: Story) => void;
 };
 
-export function StoryViewer({ story, onClose, onReact, currentUserId, onDelete, onEdit }: StoryViewerProps) {
+export function StoryViewer({ story, stories = [], onClose, onStoryChange, onReact, currentUserId, onDelete, onEdit }: StoryViewerProps) {
   const template = story ? STORY_TEMPLATES[story.templateType] : null;
   const owned = Boolean(story && currentUserId && story.user.id === currentUserId);
+  const storyList = story && stories.length && stories.every((item) => item.id !== story.id) ? [story, ...stories] : stories.length ? stories : story ? [story] : [];
+  const currentIndex = story ? storyList.findIndex((item) => item.id === story.id) : -1;
+  const hasPrevious = currentIndex > 0;
+  const hasNext = currentIndex >= 0 && currentIndex < storyList.length - 1;
+
+  function goToPrevious() {
+    if (hasPrevious) {
+      onStoryChange?.(storyList[currentIndex - 1]);
+    }
+  }
+
+  function goToNext() {
+    if (hasNext) {
+      onStoryChange?.(storyList[currentIndex + 1]);
+      return;
+    }
+
+    onClose();
+  }
 
   return (
     <AnimatePresence>
@@ -35,13 +56,16 @@ export function StoryViewer({ story, onClose, onReact, currentUserId, onDelete, 
               background: `radial-gradient(circle at 20% 0%, ${story.accentColor}33, transparent 40%), linear-gradient(160deg, #06120b, #101524 50%, #2b1046)`
             }}
           >
+            <button type="button" aria-label="Story anterior" onClick={goToPrevious} className="absolute inset-y-0 left-0 z-[1] w-1/3" />
+            <button type="button" aria-label="Proximo story" onClick={goToNext} className="absolute inset-y-0 right-0 z-[1] w-1/3" />
+
             <div className="absolute right-4 top-4 z-10 flex gap-2">
               {owned ? (
                 <>
-                  <button type="button" onClick={() => story && onEdit?.(story)} className="grid size-9 place-items-center rounded-full bg-black/45 text-primary">
+                  <button type="button" onClick={() => onEdit?.(story)} className="grid size-9 place-items-center rounded-full bg-black/45 text-primary">
                     <Edit3 className="size-4" />
                   </button>
-                  <button type="button" onClick={() => story && onDelete?.(story.id)} className="grid size-9 place-items-center rounded-full bg-black/45 text-red-400">
+                  <button type="button" onClick={() => onDelete?.(story.id)} className="grid size-9 place-items-center rounded-full bg-black/45 text-red-400">
                     <Trash2 className="size-4" />
                   </button>
                 </>
@@ -50,17 +74,36 @@ export function StoryViewer({ story, onClose, onReact, currentUserId, onDelete, 
                 <X className="size-5" />
               </button>
             </div>
-            <div className="mb-5 h-1 rounded-full bg-white/15">
-              <motion.div className="h-full rounded-full bg-primary" initial={{ width: "0%" }} animate={{ width: "100%" }} transition={{ duration: 6 }} onAnimationComplete={onClose} />
+
+            <div className="relative z-10 mb-5 flex gap-1">
+              {storyList.map((item, index) => {
+                const active = item.id === story.id;
+                const completed = currentIndex > index;
+
+                return (
+                  <div key={item.id} className="h-1 flex-1 overflow-hidden rounded-full bg-white/15">
+                    <motion.div
+                      key={active ? story.id : `${item.id}-${completed}`}
+                      className="h-full rounded-full bg-primary"
+                      initial={{ width: completed ? "100%" : "0%" }}
+                      animate={{ width: active || completed ? "100%" : "0%" }}
+                      transition={{ duration: active ? 6 : 0, ease: "linear" }}
+                      onAnimationComplete={active ? goToNext : undefined}
+                    />
+                  </div>
+                );
+              })}
             </div>
-            <div className="flex items-center gap-3">
+
+            <div className="relative z-10 flex items-center gap-3">
               <Avatar label={story.user.avatar} verified={story.user.verified} size="md" />
               <div>
                 <p className="font-black">{story.user.name}</p>
                 <p className="text-xs text-zinc-300">{story.user.badge}</p>
               </div>
             </div>
-            <div className="mt-10 text-center sm:mt-12">
+
+            <div className="relative z-10 mt-10 text-center sm:mt-12">
               <p className="text-sm font-black uppercase tracking-[0.2em] text-zinc-400">{template.label}</p>
               <p className="mt-2 text-5xl">{template.emoji}</p>
               <p className="mt-4 text-lg font-bold text-zinc-200">{story.game}</p>
@@ -74,7 +117,8 @@ export function StoryViewer({ story, onClose, onReact, currentUserId, onDelete, 
                 </p>
               ) : null}
             </div>
-            <div className="absolute inset-x-5 bottom-5 rounded-2xl border border-white/10 bg-black/30 p-3 backdrop-blur">
+
+            <div className="absolute inset-x-5 bottom-5 z-10 rounded-2xl border border-white/10 bg-black/30 p-3 backdrop-blur">
               <ReactionBar reactions={story.reactions} compact onReact={(r) => onReact(story.id, r)} />
             </div>
           </motion.div>

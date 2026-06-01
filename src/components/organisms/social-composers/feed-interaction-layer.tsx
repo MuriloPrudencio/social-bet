@@ -6,6 +6,7 @@ import { StoryViewer } from "@/components/organisms/social-composers/story-viewe
 import { WinShareModal } from "@/components/organisms/social-composers/win-share-modal";
 import { useFeedMutations } from "@/hooks/use-feed-mutations";
 import { useProfile } from "@/hooks/use-profile";
+import { useStories } from "@/hooks/use-stories";
 import { useFeedInteractionStore } from "@/stores/feed-interaction-store";
 import type { CreatePostPayload, PendingWinShare } from "@/types/betsocial";
 
@@ -22,13 +23,23 @@ export function FeedInteractionLayer() {
 
   const { reactToStory, createStory, deleteStory, createPost, dismissWinShare } = useFeedMutations();
   const profile = useProfile(true);
+  const stories = useStories(Boolean(story));
+  const storyItems = stories.data ?? [];
+  const orderedStories = profile.data?.id
+    ? [
+        ...storyItems.filter((item) => item.user.id === profile.data?.id),
+        ...storyItems.filter((item) => item.user.id !== profile.data?.id)
+      ]
+    : storyItems;
 
   return (
     <>
       <StoryViewer
         story={story}
+        stories={orderedStories}
         currentUserId={profile.data?.id}
         onClose={closeStory}
+        onStoryChange={(nextStory) => useFeedInteractionStore.getState().openStory(nextStory)}
         onReact={(id, r) => reactToStory.mutate({ storyId: id, reaction: r })}
         onDelete={(id) => deleteStory.mutate(id)}
         onEdit={() => {
