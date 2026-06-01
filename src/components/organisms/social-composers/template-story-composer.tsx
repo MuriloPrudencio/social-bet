@@ -25,7 +25,7 @@ type TemplateStoryComposerProps = {
 export function TemplateStoryComposer({ open, pending, onClose, onSubmit }: TemplateStoryComposerProps) {
   const [templateType, setTemplateType] = useState<StoryTemplateType>("big_win");
   const [caption, setCaption] = useState("");
-  const [sticker, setSticker] = useState("🚀");
+  const [sticker, setSticker] = useState(STORY_STICKERS[0]);
   const [accentColor, setAccentColor] = useState("#32f253");
   const template = STORY_TEMPLATES[templateType];
 
@@ -46,18 +46,23 @@ export function TemplateStoryComposer({ open, pending, onClose, onSubmit }: Temp
   return (
     <AnimatePresence>
       {open ? (
-        <motion.div className="fixed inset-0 z-50 flex items-end justify-center bg-black/75 p-3 backdrop-blur-md sm:items-center" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+        <motion.div
+          className="fixed inset-0 z-50 flex items-stretch justify-center bg-black/80 p-0 backdrop-blur-md sm:items-center sm:p-3"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+        >
           <motion.form
             onSubmit={handleSubmit}
             initial={{ y: 80 }}
             animate={{ y: 0 }}
             exit={{ y: 80 }}
-            className="w-full max-w-lg rounded-3xl border border-white/10 bg-[#071018] p-5 shadow-violet"
+            className="h-[100dvh] max-h-[100dvh] w-full overflow-y-auto border border-white/10 bg-[#071018] px-4 pb-5 pt-4 shadow-violet sm:h-auto sm:max-h-[calc(100dvh-1.5rem)] sm:max-w-lg sm:rounded-3xl sm:p-5"
           >
-            <div className="mb-4 flex items-start justify-between">
+            <div className="sticky top-0 z-10 -mx-4 mb-4 flex items-start justify-between border-b border-white/10 bg-[#071018]/95 px-4 pb-3 backdrop-blur sm:static sm:mx-0 sm:border-0 sm:bg-transparent sm:p-0">
               <div>
                 <h3 className="text-xl font-black">Highlight controlado</h3>
-                <p className="text-sm text-zinc-400">Template automático · sem upload livre</p>
+                <p className="text-sm text-zinc-400">Template automatico · sem upload livre</p>
               </div>
               <button type="button" onClick={onClose} className="grid size-9 place-items-center rounded-full bg-white/5">
                 <X className="size-5" />
@@ -85,7 +90,9 @@ export function TemplateStoryComposer({ open, pending, onClose, onSubmit }: Temp
               style={{ borderColor: `${accentColor}55`, background: `linear-gradient(160deg, ${accentColor}22, transparent 55%)` }}
             >
               <p className="text-xs font-black uppercase tracking-widest text-zinc-400">Preview</p>
-              <p className="mt-2 text-2xl font-black">{template.emoji} {template.label}</p>
+              <p className="mt-2 text-2xl font-black">
+                {template.emoji} {template.label}
+              </p>
               <p className="text-sm text-zinc-300">Fortune Tiger</p>
               <p className="mt-2 text-4xl font-black" style={{ color: accentColor }}>
                 230x
@@ -130,7 +137,7 @@ export function TemplateStoryComposer({ open, pending, onClose, onSubmit }: Temp
               ))}
             </div>
 
-            <Button className="mt-5 w-full" type="submit" disabled={pending}>
+            <Button className="sticky bottom-0 mt-5 w-full shadow-neon sm:static" type="submit" disabled={pending}>
               <Send className="size-4" />
               {pending ? "Gerando..." : "Publicar highlight"}
             </Button>

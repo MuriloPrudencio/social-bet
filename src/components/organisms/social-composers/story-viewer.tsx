@@ -24,12 +24,12 @@ export function StoryViewer({ story, onClose, onReact, currentUserId, onDelete, 
   return (
     <AnimatePresence>
       {story && template ? (
-        <motion.div className="fixed inset-0 z-50 grid place-items-center bg-black/85 p-4 backdrop-blur-md" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+        <motion.div className="fixed inset-0 z-50 grid place-items-center bg-black/90 p-0 backdrop-blur-md sm:p-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
           <motion.div
             initial={{ y: 24, scale: 0.96 }}
             animate={{ y: 0, scale: 1 }}
             exit={{ y: 24, scale: 0.96 }}
-            className="relative aspect-[9/16] w-full max-w-[380px] overflow-hidden rounded-3xl border p-5 shadow-neon"
+            className="relative h-[100dvh] max-h-[100dvh] w-full overflow-hidden border p-4 shadow-neon sm:aspect-[9/16] sm:h-auto sm:max-h-[calc(100dvh-2rem)] sm:max-w-[380px] sm:rounded-3xl sm:p-5"
             style={{
               borderColor: `${story.accentColor}66`,
               background: `radial-gradient(circle at 20% 0%, ${story.accentColor}33, transparent 40%), linear-gradient(160deg, #06120b, #101524 50%, #2b1046)`
@@ -60,11 +60,11 @@ export function StoryViewer({ story, onClose, onReact, currentUserId, onDelete, 
                 <p className="text-xs text-zinc-300">{story.user.badge}</p>
               </div>
             </div>
-            <div className="mt-12 text-center">
+            <div className="mt-10 text-center sm:mt-12">
               <p className="text-sm font-black uppercase tracking-[0.2em] text-zinc-400">{template.label}</p>
               <p className="mt-2 text-5xl">{template.emoji}</p>
               <p className="mt-4 text-lg font-bold text-zinc-200">{story.game}</p>
-              <p className="mt-6 text-6xl font-black" style={{ color: story.accentColor, textShadow: `0 0 40px ${story.accentColor}88` }}>
+              <p className="mt-6 text-5xl font-black sm:text-6xl" style={{ color: story.accentColor, textShadow: `0 0 40px ${story.accentColor}88` }}>
                 {story.multiplier}x
               </p>
               <p className="mt-3 text-xl font-black text-primary">{money(story.amount)}</p>
