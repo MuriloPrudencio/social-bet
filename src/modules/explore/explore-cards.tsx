@@ -4,6 +4,7 @@ import { Surface } from "@/components/atoms/surface";
 import { buildExploreCards } from "@/modules/explore/explore.mapper";
 import { FollowButton } from "@/components/molecules/follow-button";
 import { Avatar } from "@/components/atoms/avatar";
+import Link from "next/link";
 import type { Trend } from "@/components/organisms/right-rail";
 import type { Challenge, DiscoveryPayload, RankingUser } from "@/types/betsocial";
 
@@ -53,9 +54,13 @@ function DiscoveryList({ title, users = [] }: { title: string; users?: NonNullab
       <div className="space-y-2">
         {users.slice(0, 5).map((user) => (
           <div key={user.id} className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.03] p-3">
-            <Avatar label={user.avatar} verified={user.verified} size="sm" />
+            <Link href={`/profile/${user.id}`} className="shrink-0 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary">
+              <Avatar label={user.avatar} verified={user.verified} size="sm" />
+            </Link>
             <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-bold">{user.name}</p>
+              <Link href={`/profile/${user.id}`} className="block truncate text-sm font-bold transition hover:text-primary">
+                {user.name}
+              </Link>
               <p className="truncate text-xs text-zinc-400">{user.reason ?? user.badge}</p>
             </div>
             <span className="hidden rounded-full bg-primary/10 px-2 py-1 text-xs font-black text-primary sm:inline">

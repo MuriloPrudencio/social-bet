@@ -11,6 +11,7 @@ export function useFeedMutations() {
     mutationFn: ({ postId, reaction }: { postId: string; reaction: ReactionKey }) => betSocialApi.reactToPost(postId, reaction),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ["feed"] });
+      void queryClient.invalidateQueries({ queryKey: ["public-profile"] });
     }
   });
 
@@ -19,6 +20,7 @@ export function useFeedMutations() {
     onSuccess: (updatedStory) => {
       useFeedInteractionStore.getState().openStory(updatedStory);
       void queryClient.invalidateQueries({ queryKey: queryKeys.stories });
+      void queryClient.invalidateQueries({ queryKey: ["public-profile"] });
     }
   });
 

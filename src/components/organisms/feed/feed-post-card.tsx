@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { Share2, MoreHorizontal, Users } from "lucide-react";
+import Link from "next/link";
 import { Avatar } from "@/components/atoms/avatar";
 import { Button } from "@/components/atoms/button";
 import { Surface } from "@/components/atoms/surface";
@@ -35,10 +36,14 @@ export function FeedPostCard({ post, privacy, sharedPostId, onReact, onShare }: 
     <motion.article layout initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
       <Surface className="premium-card p-4 transition hover:border-primary/30 hover:shadow-neon">
         <div className="mb-4 flex items-start gap-3">
-          <Avatar label={post.user.avatar} verified={post.user.verified} size="lg" />
+          <Link href={`/profile/${post.user.id}`} className="shrink-0 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary">
+            <Avatar label={post.user.avatar} verified={post.user.verified} size="lg" />
+          </Link>
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center gap-2">
-              <h3 className="font-bold">{post.user.name}</h3>
+              <Link href={`/profile/${post.user.id}`} className="font-bold transition hover:text-primary">
+                {post.user.name}
+              </Link>
               <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[11px] font-bold text-primary">{post.user.badge}</span>
               <span className="rounded-full border border-violetGlow/30 bg-violetGlow/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-violetGlow">
                 {sourceLabels[post.source]}

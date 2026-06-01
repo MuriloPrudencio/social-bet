@@ -16,6 +16,8 @@ import type {
   NotificationItem,
   PendingWinShare,
   PrivacySettings,
+  Profile,
+  PublicUserProfile,
   RankingUser,
   ReactionKey,
   Story
@@ -161,6 +163,51 @@ function addReaction<T extends { id: string; reactions: Record<ReactionKey, numb
   });
 }
 
+function buildPublicProfile(userId: string): PublicUserProfile | null {
+  const user =
+    userId === profileMock.id
+      ? profileMock
+      : suggestedUsersMock.find((item) => item.id === userId) ??
+        feed.find((item) => item.user.id === userId)?.user ??
+        stories.find((item) => item.user.id === userId)?.user ??
+        ranking.find((item) => item.id === userId);
+
+  if (!user) return null;
+
+  const userPosts = withFollowState(feed.filter((post) => post.user.id === userId));
+  const userStories = withFollowState(stories.filter((story) => story.user.id === userId));
+  const userRanking = ranking.find((item) => item.id === userId);
+  const suggestedUser = suggestedUsersMock.find((item) => item.id === userId);
+  const totalWon = userPosts.reduce((sum, post) => sum + post.amount, userRanking?.amount ?? 0);
+  const bestMultiplier = Math.max(userRanking?.multiplier ?? 0, ...userPosts.map((post) => post.multiplier), ...userStories.map((story) => story.multiplier), 0);
+  const favoriteGame = userPosts[0]?.game ?? userStories[0]?.game ?? "Fortune Tiger";
+  const followers = suggestedUser?.followers ?? user.followers ?? profileMock.followers;
+
+  const profile: Profile = {
+    ...profileMock,
+    ...user,
+    balance: userId === profileMock.id ? profileMock.balance : 0,
+    xp: userRanking?.xp ?? profileMock.xp,
+    nextLevelXP: profileMock.nextLevelXP,
+    followers,
+    following: userId === profileMock.id ? followingIds.size : Math.max(8, Math.round(followers * 0.08)),
+    posts: userPosts.length,
+    totalWon,
+    bestMultiplier,
+    favoriteGame,
+    badges: [user.badge, bestMultiplier >= 500 ? "High Roller" : "Consistente", followingIds.has(userId) ? "Na sua rede" : "Comunidade"],
+    privacy,
+    isFollowing: followingIds.has(userId)
+  };
+
+  return {
+    profile,
+    posts: userPosts,
+    stories: userStories,
+    isCurrentUser: userId === profileMock.id
+  };
+}
+
 function evolveRanking() {
   ranking = ranking
     .map((user, index): RankingUser => ({
@@ -271,6 +318,12 @@ export const handlers = [
   http.get("/api/profile/activities", async () => {
     await delay(250);
     return HttpResponse.json(activitiesMock);
+  }),
+
+  http.get("/api/users/:userId/profile", async ({ params }) => {
+    await delay(280);
+    const payload = buildPublicProfile(String(params.userId));
+    return payload ? HttpResponse.json(payload) : new HttpResponse(null, { status: 404 });
   }),
 
   http.get("/api/notifications", async () => {

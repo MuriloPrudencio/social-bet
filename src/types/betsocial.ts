@@ -180,6 +180,13 @@ export type Profile = UserSummary & {
   privacy: PrivacySettings;
 };
 
+export type PublicUserProfile = {
+  profile: Profile;
+  posts: FeedPost[];
+  stories: Story[];
+  isCurrentUser?: boolean;
+};
+
 export type Activity = {
   id: string;
   user: string;

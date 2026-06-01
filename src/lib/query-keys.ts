@@ -3,6 +3,7 @@ export const queryKeys = {
   ranking: ["ranking"] as const,
   challenges: ["challenges"] as const,
   profile: ["profile"] as const,
+  publicProfile: (userId: string) => ["public-profile", userId] as const,
   privacy: ["privacy"] as const,
   notifications: ["notifications"] as const,
   discovery: ["discovery"] as const,

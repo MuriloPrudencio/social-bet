@@ -2,6 +2,7 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import { Edit3, Trash2, X } from "lucide-react";
+import Link from "next/link";
 import { Avatar } from "@/components/atoms/avatar";
 import { ReactionBar } from "@/components/molecules/reaction-bar";
 import { STORY_TEMPLATES } from "@/lib/templates";
@@ -96,9 +97,13 @@ export function StoryViewer({ story, stories = [], onClose, onStoryChange, onRea
             </div>
 
             <div className="relative z-10 flex items-center gap-3">
-              <Avatar label={story.user.avatar} verified={story.user.verified} size="md" />
+              <Link href={`/profile/${story.user.id}`} onClick={onClose} className="shrink-0 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary">
+                <Avatar label={story.user.avatar} verified={story.user.verified} size="md" />
+              </Link>
               <div>
-                <p className="font-black">{story.user.name}</p>
+                <Link href={`/profile/${story.user.id}`} onClick={onClose} className="font-black transition hover:text-primary">
+                  {story.user.name}
+                </Link>
                 <p className="text-xs text-zinc-300">{story.user.badge}</p>
               </div>
             </div>
